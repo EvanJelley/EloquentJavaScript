@@ -129,5 +129,3 @@ function countChar(string, char) {
     }
     return count;
 }
-
-console.log(countChar("kakkerlak", "k"));
