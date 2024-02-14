@@ -35,8 +35,135 @@ function journalEvents(journal) {
     return events;
 }
 
-for (let event of journalEvents(JOURNAL)) {
-    if (phi(tableFor(event, JOURNAL)) > 0.1 || phi(tableFor(event, JOURNAL)) < -0.1) {
-        console.log(event + ":", phi(tableFor(event, JOURNAL)));
+// UNCOMMENT TO SEE CORRELATED EVENTS
+
+// for (let event of journalEvents(JOURNAL)) {
+//     if (phi(tableFor(event, JOURNAL)) > 0.1 || phi(tableFor(event, JOURNAL)) < -0.1) {
+//         console.log(event + ":", phi(tableFor(event, JOURNAL)));
+//     }
+// }
+
+
+// More about arrays
+let toDoList = [];
+function remember(task) {
+    toDoList.push(task);
+}
+function getTask() {
+    return toDoList.shift();
+}
+function rememberUrgently(task) {
+    toDoList.unshift(task);
+}
+
+remember("groceries");
+remember("laundry");
+rememberUrgently("homework");
+
+function max(...numbers) {
+    let result = -Infinity;
+    for (let number of numbers) {
+      if (number > result) result = number;
+    }
+    return result;
+  }
+
+// Excercise 1
+function range (start, end, step = 1) {
+    let arr = [];
+    if (step > 0) {
+        for (let i = start; i <= end; i += step) {
+            arr.push(i);
+        }
+    } else {
+        for (let i = start; i >= end; i += step) {
+            arr.push(i);
+        }
+    }
+    return arr;
+}
+
+function sum(arr) {
+    tot = 0;
+    for (let i of arr) {
+        tot += i;
+    }
+    return tot;
+}
+
+//  Excercise 2
+function reverseArray (arr) {
+    newArr = [];
+    for (let i = arr.length - 1; i >= 0; i -= 1) {
+        newArr.push(arr[i])
+    } 
+    return newArr;
+}
+
+let lst = [1, 2, 3, 4, 5]
+
+function reverseArrayInPlace(arr) {
+    copyArr = arr.slice();
+    arr.splice(0, arr.length)
+    for (let i = copyArr.length - 1; i >= 0; i -= 1) {
+        arr.push(copyArr[i])
+    }
+    return arr
+}
+
+// Excercise 3
+function arrayToList(arr) {
+    if (arr.length == 1) {
+        let list = {
+            value: arr[0],
+            rest: null
+        }
+        return list
+    } else {
+        let list = {
+            value: arr[0],
+            rest: arrayToList(arr.slice(1))
+        }
+        return list
     }
 }
+
+function listToArray(list) {
+    arr = [];
+    for (let node = list; node; node = node.rest) {
+        arr.push(node.value)
+    }
+    return arr
+}
+
+function prepend(element, list) {
+    newList = {
+        value: element,
+        rest: list
+    }
+    return newList
+}
+
+function nth(n, list) {
+    let value = null;
+    for (let node = list; n > 0; node = node.rest) {
+        value = node.value
+        n -= 1
+    }
+    return value
+}
+
+let numsArray = [1, 2, 3, 4, 6, 78, 99, 54]
+numsList = arrayToList(numsArray)
+console.log(nth(6, numsList))
+
+// arr = [];
+// if (list.rest == null){
+//     arr.push(list.value)
+//     return
+// } else {
+//     arr.push(listToArray(list.rest))
+//     arr.push(list.value)
+// }
+// reverseArrayInPlace(arr)
+// return arr
