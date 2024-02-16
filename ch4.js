@@ -153,17 +153,34 @@ function nth(n, list) {
     return value
 }
 
-let numsArray = [1, 2, 3, 4, 6, 78, 99, 54]
-numsList = arrayToList(numsArray)
-console.log(nth(6, numsList))
 
-// arr = [];
-// if (list.rest == null){
-//     arr.push(list.value)
-//     return
-// } else {
-//     arr.push(listToArray(list.rest))
-//     arr.push(list.value)
-// }
-// reverseArrayInPlace(arr)
-// return arr
+// Excercise 4
+
+function deepEquals(a, b) {
+    if (typeof a != "object" && typeof b != "object") {
+        return a == b
+    } else if (a === null || b === null) {
+        return a == b
+    } else {
+        let equalFlag = true
+        let checkCount = 0
+        if (Object.keys(a).length != Object.keys(b).length) {
+            return false
+        }
+        for (let keyA of Object.keys(a)) {
+            for (let keyB of Object.keys(b)) {
+                if (keyA == keyB) {
+                    checkCount += 1
+                    if (!deepEquals(a[keyA], b[keyB])) {
+                        return false
+                    }
+
+                }
+            }
+        }
+        if (checkCount != Object.keys(a).length) {
+            return false
+        }
+        return equalFlag
+    }
+}
