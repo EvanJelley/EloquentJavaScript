@@ -77,8 +77,54 @@ class Vec {
     }
 }
 
-console.log(new Vec(1, 2).plus(new Vec(2, 3)));
-console.log(new Vec(1, 2).minus(new Vec(2, 3)));
-console.log(new Vec(3, 4).length);
+// Exercise 2
+class Group {
+    constructor() {
+        this.items = []
+    }
+    add(item) {
+        if (!this.items.includes(item)) this.items.push(item)
+    }
+    delete(item) {
+        let index = this.items.indexOf(item)
+        if (index > -1) this.items.splice(index, 1)
+    }
+    has(item) {
+        if (this.items.includes(item)) {
+            return true
+        } else {
+            return false
+        }
+    }
+    static from(iterable) {
+        let group = new Group()
+        for (let entry of iterable) {
+            group.add(entry)
+        }
+        return group
+    }
+    [Symbol.iterator]() {
+        return new GroupIterator(this)
+    }
+}
 
+// Exercise 3
+class GroupIterator {
+    constructor(group) {
+        this.index = 0;
+        this.group = group.items;
+    }
 
+    next() {
+        if (this.index == this.group.length) return { done: true };
+        let value = this.group[this.index];
+        this.index++;
+        return { value, done: false };
+    }
+}
+
+// Exercise 4
+let map = {one: true, two: true, hasOwnProperty: true};
+
+// Fix this call
+console.log(Object.prototype.hasOwnProperty.call(map, "one"));
