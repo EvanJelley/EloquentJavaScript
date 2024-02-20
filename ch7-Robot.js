@@ -48,6 +48,17 @@ class VillageState {
 function runRobot(state, robot, memory) {
     for (let turn = 0; ; turn++) {
         if (state.parcels.length == 0) {
+            return turn;
+        }
+        let action = robot(state, memory);
+        state = state.move(action.direction);
+        memory = action.memory;
+    }
+}
+
+function runTalkativeRobot(state, robot, memory) {
+    for (let turn = 0; ; turn++) {
+        if (state.parcels.length == 0) {
             console.log(`Done in ${turn} turns`);
             break;
         }
@@ -126,4 +137,90 @@ function goalOrientedRobot({ place, parcels }, route) {
     return { direction: route[0], memory: route.slice(1) };
 }
 
-runRobot(VillageState.random(), goalOrientedRobot, []);
+// runTalkativeRobot(VillageState.random(), goalOrientedRobot, [])
+
+// Parcel picker - Exercise 2
+function closestParcel(graph, from, places) {
+    let shortestRoute = null
+    for (let place of places) {
+        route = findRoute(graph, from, place)
+        if (shortestRoute == null || route.length < shortestRoute.length) {
+            shortestRoute = route
+        }
+    }
+    return shortestRoute
+}
+
+function parcelPickerRobot({ place, parcels }, route) {
+    if (route == 0) {
+        let locations = []
+        for (p of parcels) {
+            if (p.place == place) {
+                locations.push(p.address)
+            } else {
+                locations.push(p.place)
+            }
+        route = closestParcel(roadGraph, place, locations)
+        }
+    }
+    return { direction: route[0], memory: route.slice(1)}
+}
+
+// runTalkativeRobot(VillageState.random(), parcelPickerRobot, [])
+
+// Comparison Function - Exercise 1
+function compareRobots(robot1, memory1, robot2, memory2, tests = 100) {
+    let totSteps1 = 0
+    let totSteps2 = 0
+    for (i = 0; i < tests; i++) {
+        let state = VillageState.random()
+        totSteps1 += runRobot(state, robot1, memory1)
+        totSteps2 += runRobot(state, robot2, memory2)
+    }
+    console.log(`Robot1 average steps to complete: ${totSteps1 / tests}\n Robot2 average steps to complete: ${totSteps2 / tests}`)
+}
+
+
+// compareRobots(routeRobot, [], parcelPickerRobot, [], 10000)
+
+// Exercise 3
+class PGroup {
+    constructor(array) {
+        this.items = array
+    }
+    add(item) {
+        if (!this.items.includes(item)) {
+            let newItems = [...this.items]
+            newItems.push(item)
+            return new PGroup(newItems)
+        }
+    }
+    delete(item) {
+        let index = this.items.indexOf(item)
+        if (index > -1) {
+            let newItems = [...this.items]
+            newItems.splice(index, 1)
+            return new PGroup(newItems)
+        }
+    }
+    has(item) {
+        if (this.items.includes(item)) {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+PGroup.empty = new PGroup([])
+
+let a = PGroup.empty.add("a")
+let ab = a.add("b")
+let b = ab.delete("a")
+console.log(b.has("b"));
+// → true
+console.log(a.has("b"));
+// → false
+console.log(b.has("a"));
+// → false
+
