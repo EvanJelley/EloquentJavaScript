@@ -67,7 +67,7 @@ console.log(text.replace(/(\W)'|'(\W)|(^)'|'($)/g, "$1\""));
 
 // Exercise 3
 // Fill in this regular expression.
-let number = /^(\+|\-)?\d*(.\.|\..)?\d*(e(\+|\-)?)?\d*$/i;
+let number = /^(\+|\-)?\d*(.\.|\..)?\d*(e(\+|\-)?)?e\d*$/i;
 
 // Tests:
 for (let str of ["1", "-1", "+15", "1.55", ".5", "5.",
