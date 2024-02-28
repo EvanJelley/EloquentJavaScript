@@ -26,12 +26,12 @@ let p = new Promise((resolve, reject) => {
 
 var bigOak = require("./crow-tech").bigOak;
 
-bigOak.readStorage("food caches", caches => {
-  let firstCache = caches[0];
-  bigOak.readStorage(firstCache, info => {
-    console.log(info);
-  });
-});
+// bigOak.readStorage("food caches", caches => {
+//   let firstCache = caches[0];
+//   bigOak.readStorage(firstCache, info => {
+//     console.log(info);
+//   });
+// });
 
 var defineRequestType = require("./crow-tech.js").defineRequestType;
 
@@ -40,11 +40,17 @@ defineRequestType("note", (nest, content, source, done) => {
     done();
 });
 
+
+// bigOak.send("Cow Pasture", "note", "Let's caw loudly at 7PM",
+//             () => console.log("Done"));
+
 function storage(nest, name) {
     return new Promise(resolve => {
         nest.readStorage(name, result => resolve(result));
     });
 }
+
+// storage(bigOak, "enemies").then(value => console.log("Got", value));
 
 var Timeout = class Timeout extends Error { }
 
@@ -92,6 +98,8 @@ function availableNeighbors(nest) {
     });
 }
 
+// availableNeighbors(bigOak).then(console.log);
+
 var everywhere = require("./crow-tech.js").everywhere;
 
 everywhere(nest => {
@@ -111,6 +119,8 @@ requestType("gossip", (nest, message, source) => {
     console.log(`${nest.name} received gossip '${message}' from ${source}`);
     sendGossip(nest, message, source);
 });
+
+// sendGossip(bigOak, "Kids with airgun in the park");
 
 requestType("connections", (nest, { name, neighbors },
     source) => {
@@ -136,6 +146,8 @@ everywhere(nest => {
     nest.state.connections.set(nest.name, nest.neighbors);
     broadcastConnections(nest, nest.name);
 });
+
+// console.log(bigOak.state.connections);
 
 function findRoute(from, to, connections) {
     let work = [{ at: from, via: null }];
