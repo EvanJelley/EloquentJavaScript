@@ -97,7 +97,7 @@
         para.style.color = "blue";
     </script>
 
-    <p style="text-align: center">
+    <!-- <p style="text-align: center">
         <img class="cat" src="cat.png" style="position: relative; height: 50px; width: auto;">
     </p>
 
@@ -111,6 +111,127 @@
             cat.style.top = (Math.sin(angle) * 20) + "px";
             cat.style.left = (Math.cos(angle) * 200) + "px";
             requestAnimationFrame(newTime => animate(newTime, time));
+        }
+        requestAnimationFrame(animate);
+    </script> -->
+
+    <!--Exercise 1-->
+
+    <h1>Mountains</h1>
+
+    <div id="mountains"></div>
+
+    <script>
+        const MOUNTAINS = [
+            { name: "Kilimanjaro", height: 5895, place: "Tanzania" },
+            { name: "Everest", height: 8848, place: "Nepal" },
+            { name: "Mount Fuji", height: 3776, place: "Japan" },
+            { name: "Vaalserberg", height: 323, place: "Netherlands" },
+            { name: "Denali", height: 6168, place: "United States" },
+            { name: "Popocatepetl", height: 5465, place: "Mexico" },
+            { name: "Mont Blanc", height: 4808, place: "Italy/France" }
+        ];
+
+        function buildTable(data) {
+            let table = document.createElement("table");
+
+            let fields = Object.keys(data[0]);
+            firstRow = document.createElement("tr");
+            table.appendChild(firstRow);
+            for (field of fields) {
+                let th = document.createElement("th");
+                th.appendChild(document.createTextNode(field.toUpperCase()));
+                firstRow.appendChild(th);
+            }
+            for (let mountain of data) {
+                let row = document.createElement("tr");
+
+                for (let field of fields) {
+                    let cell = document.createElement("td");
+                    cell.appendChild(document.createTextNode(mountain[field]));
+                    if (typeof mountain[field] == "number") {
+                        cell.style.textAlign = "right";
+                    }
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            return table;
+        }
+
+        table = buildTable(MOUNTAINS);
+        document.getElementById("mountains").appendChild(table);
+    </script>
+
+    <!--Exercise 2-->
+    <h1>Heading with a <span>span</span> element.</h1>
+    <p>A paragraph with <span>one</span>, <span>two</span>
+        spans.</p>
+
+    <script>
+        function byTagName(node, tagName) {
+            let found = [];
+            tagName = tagName.toUpperCase();
+
+            function explore(node) {
+                for (let i = 0; i < node.childNodes.length; i++) {
+                    let child = node.childNodes[i];
+                    if (child.nodeType == document.ELEMENT_NODE) {
+                        if (child.nodeName == tagName) {
+                            found.push(child);
+                        }
+                        explore(child);
+                    }
+                }
+            }
+            explore(node);
+            return found;
+        }
+
+        let q1 = document.createElement("p");
+        q1.appendChild(document.createTextNode("Q1: " + byTagName(document.body, "h1").length));
+        document.body.appendChild(q1);
+
+        let q2 = document.createElement("p");
+        q2.appendChild(document.createTextNode("Q2: " + byTagName(document.body, "span").length));
+        document.body.appendChild(q2);
+
+        let allPElements = document.querySelectorAll("p");
+        let item = allPElements[allPElements.length - 3];
+        let q3 = document.createElement("p");
+        q3.appendChild(document.createTextNode("Q3: " + byTagName(item, "span").length));
+        document.body.appendChild(q3);
+
+    </script>
+
+    <!--Exercise 3-->
+    <style>
+        body {
+            min-height: 200px
+        }
+    </style>
+    <img src="cat.png" id="cat" style="position: absolute; height: 50px; width: auto;">
+    <img src="hat.png" id="hat" style="position: absolute; height: 50px; width: auto;">
+
+    <script>
+        let cat = document.querySelector("#cat");
+        let hat = document.querySelector("#hat");
+
+        let angle = 0;
+        let hatAngle = 0;
+        let lastTime = null;
+        function animate(time) {
+            if (lastTime != null) angle += (time - lastTime) * 0.001;
+            if (lastTime != null) hatAngle -= (time - lastTime) * 0.001;
+            lastTime = time;
+            cat.style.top = (Math.sin(angle) * 40 + 40) + "px";
+            cat.style.left = (Math.cos(angle) * 200 + 230) + "px";
+
+            // Your extensions here.
+            hat.style.top = (Math.sin(hatAngle) * 40 + 40) + "px";
+            hat.style.left = (Math.cos(hatAngle) * 200 + 230) + "px";
+
+            requestAnimationFrame(animate);
         }
         requestAnimationFrame(animate);
     </script>
