@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chapter 15</title>
+</head>
+
+<body>
+    <h1>Chapter 15</h1>
+    <p>Chapter 15 content goes here.</p>
+
+    <p>Click this document to activate this handler.</p>
+    <!-- <script>
+        window.addEventListener('click', () => {
+            console.log("You knocked?")
+            alert("You knocked?")
+        })
+    </script> -->
+
+    <button id="anyTimeButton">CLICK ME (Using script)</button>
+    <p>Nothing to see here...</p>
+    <button onclick="alert('Button clicked')">CLICK ME (Using onclick)</button>
+    <script>
+        let button = document.getElementById('anyTimeButton');
+        button.addEventListener('click', () => {
+            alert('Button clicked');
+        })
+    </script>
+
+    <button id="oneTimeButton">I'm only doing this once!</button>
+    <script>
+        let button2 = document.getElementById('oneTimeButton');
+        function once() {
+            alert('That\s all folks!')
+            button2.removeEventListener('click', once);
+        };
+        button2.addEventListener('click', once);
+    </script>
+
+    <button id="dynamicButton">I do different things.</button>
+    <script>
+        button3 = document.getElementById('dynamicButton');
+        button3.addEventListener('mousedown', event => {
+            if (event.button == 0) {
+                alert('Left button');
+            } else if (event.button == 1) {
+                alert('Middle button');
+            } else if (event.button == 2) {
+                alert('Right button');
+            }
+        })
+    </script>
+
+    <p id="pWithButton">A paragraph with a <button id="pButton">button</button>.</p>
+    <script>
+        let paraWithButton = document.getElementById('pWithButton');
+        let pButton = document.getElementById('pButton');
+        paraWithButton.addEventListener('mousedown', event => {
+            alert('Handler in paragraph');
+        });
+        pButton.addEventListener('mousedown', event => {
+            alert('Handler in button');
+            if (event.button == 2) event.stopPropagation();
+        });
+    </script>
+
+    <div id="buttonField">
+        <button>A</button>
+        <button>B</button>
+        <button>C</button>
+    </div>
+    <script>
+        let buttonField = document.getElementById('buttonField');
+        buttonField.addEventListener('click', event => {
+            if (event.target.nodeName == 'BUTTON') {
+                alert(`Clicked ${event.target.textContent}`);
+            }
+        })
+    </script>
+
+    <a id='meanLink' href="https://developer.mozilla.org/">MDN</a>
+    <script>
+        let link = document.querySelector("a");
+        link.addEventListener("click", event => {
+            alert("Nope.");
+            event.preventDefault();
+        });
+    </script>
+
+    <p>******psssssssst this pages turns violet when you click the "V" key :)</p>
+    <script>
+        window.addEventListener('keydown', event => {
+            if (event.key == 'v') {
+                document.body.style.background = 'violet'
+            }
+        });
+        window.addEventListener('keyup', even => {
+            if (event.key == 'v') {
+                document.body.style.background = ''
+            }
+        })
+    </script>
+
+    <p>Press Ctrl-Space to continue</p>
+    <script>
+        window.addEventListener('keydown', event => {
+            if (event.key == ' ' && event.ctrlKey) {
+                alert('Off we go!!')
+            }
+        })
+    </script>
+
+    <!-- <style>
+        body {
+            height: 200px;
+            background: beige;
+        }
+
+        .dot {
+            height: 80px;
+            width: 80px;
+            border-radius: 40px;
+            /* rounds corners */
+            background: teal;
+            position: absolute;
+        }
+    </style>
+    <script>
+        window.addEventListener("click", event => {
+            let dot = document.createElement("div");
+            dot.className = "dot";
+            dot.style.left = (event.pageX - 40) + "px";
+            dot.style.top = (event.pageY - 40) + "px";
+            document.body.appendChild(dot);
+        });
+    </script> -->
+
+    <p>Drag the bar to change its width:</p>
+    <div id='stretchyBar' style='background: orange; width: 60px; height: 20px'></div>
+    <script>
+        let lastX;
+        let bar = document.getElementById('stretchyBar');
+        bar.addEventListener('mousedown', event => {
+            if (event.button == 0) {
+                lastX = event.clientX;
+                window.addEventListener('mousemove', moved);
+                event.preventDefault();
+            }
+        });
+        function moved() {
+            if (event.buttons == 0) {
+                window.removeEventListener('mousemove', moved)
+            } else {
+                let dist = event.clientX - lastX;
+                let newWidth = Math.max(10, bar.offsetWidth + dist);
+                bar.style.width = newWidth + 'px';
+                lastX = event.clientX;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
