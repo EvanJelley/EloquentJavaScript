@@ -159,6 +159,103 @@
         }
     </script>
 
+    <style>
+        #progress {
+            border-bottom: 20px solid blue;
+            width: 0;
+            position: fixed;
+            top: 0; left: 0;
+        }
+    </style>
+    <div id="progress"></div>
+    <script>
+        document.body.appendChild(document.createTextNode(
+            'supercalifragilisticexpialidocious '.repeat(100)
+        ))
+
+        let progBar = document.getElementById('progress');
+        window.addEventListener('scroll', () => {
+            let max = document.body.scrollHeight - innerHeight;
+            progBar.style.width = `${(pageYOffset / max) * 100}%`;
+        });
+    </script>
+
+    <p>Name: <input type='text' data-help='Your full name'></p>
+    <p>Age: <input type="text" data-help="Your age in years"></p>
+    <p id="help"></p>
+
+    <script>
+        let help = document.querySelector('#help');
+        let fields = document.querySelectorAll('input');
+        for (let field of Array.from(fields)) {
+            field.addEventListener('focus', event => {
+                let text = event.target.getAttribute('data-help');
+                help.textContent = text;
+            });
+            field.addEventListener('blur', event => {
+                help.textContent = '';
+            })
+        }
+    </script>
+
+    <!-- <script>
+        ///Bomb script
+        let bombTimer = setTimeout(() => {
+            alert('BOOM!');
+        }, 500);
+        if (Math.random() < .5) {
+            alert('Bomb has been defused. Phew!!');
+            clearTimeout(bombTimer);
+        }
+    </script> -->
+
+    <textarea id="timeoutPractice">Type something...</textarea>
+    <script>
+        let textarea = document.querySelector('#timeoutPractice');
+        let timeout;
+        textarea.addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => alert('You stopped typing'), 5000);
+        });
+    </script>
+
+    <!-- <script>
+        let scheduled = null;
+        window.addEventListener('mousemove', event => {
+            if (!scheduled) {
+                setTimeout(() => {
+                    document.body.textContent = `Mouse at ${scheduled.pageX}, ${scheduled.pageY}`;
+                    scheduled = null;
+                }, 250);
+            }
+            scheduled = event;
+        });
+    </script> -->
+
+    <!--Exercise 1: Balloon-->
+    <p id="balloon" style="font-size: 10px">🎈</p>
+
+    <script>
+        let balloon = document.getElementById('balloon');
+        window.addEventListener('keydown', event => {
+            if (event.key == 'ArrowUp') {
+                event.preventDefault();
+                if (parseFloat(balloon.style.fontSize) * 1.1 > 100) {
+                    balloon.textContent = '💥';
+                    window.removeEventListener('keydown', event);
+                    alert('💥 POP 💥');
+                } else {
+                    balloon.style.fontSize = `${parseFloat(balloon.style.fontSize) * 1.1}px`
+                }
+            } else if (event.key == 'ArrowDown') {
+                event.preventDefault();
+                if (parseFloat(balloon.style.fontSize) * .9 > 5) {
+                    balloon.style.fontSize = `${parseFloat(balloon.style.fontSize) * .9}px`
+                };
+            };
+        });
+    </script>
+
 </body>
 
 </html>
