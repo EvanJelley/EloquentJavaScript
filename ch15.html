@@ -164,7 +164,8 @@
             border-bottom: 20px solid blue;
             width: 0;
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
         }
     </style>
     <div id="progress"></div>
@@ -254,6 +255,73 @@
                 };
             };
         });
+    </script>
+
+    <style>
+        .trail {
+            /* className for the trail elements */
+            position: absolute;
+            height: 6px;
+            width: 6px;
+            border-radius: 3px;
+            background: teal;
+            pointer-events: none;
+        }
+    </style>
+    <!--Exercise 2: Mouse Trail-->
+    <script>
+        let dots = [];
+        i = 0;
+        window.addEventListener("mousemove", event => {
+            if (dots.length < 50) {
+                let dot = document.createElement("div");
+                dot.className = "trail";
+                dot.style.left = (event.pageX - 4) + 'px';
+                dot.style.top = (event.pageY - 4) + 'px';
+                document.body.appendChild(dot);
+                dots.push(dot)
+            } else {
+                dots[i].style.left = (event.pageX - 4) + 'px';
+                dots[i].style.top = (event.pageY - 4) + 'px';
+                i++;
+                if (i == 50) i = 0;
+            }
+        });
+    </script>
+
+    <!--Exercise 3: Tabs-->
+    <tab-panel>
+        <div data-tabname="one">Tab one</div>
+        <div data-tabname="two">Tab two</div>
+        <div data-tabname="three">Tab three</div>
+    </tab-panel>
+    <script>
+        function asTabs(node) {
+            // node.style.display = 'flex';
+            // node.style.flexDirection = 'column';
+            let tabs = Array.from(node.children);
+            let span = document.createElement('span');
+            span.id = 'tabButtons';
+            node.insertBefore(span, node.firstChild)
+            for (tab of tabs) {
+                let button = document.createElement('button');
+                button.textContent = tab.getAttribute('data-tabname');
+                span.appendChild(button);
+            };
+            tabButtons = document.getElementById('tabButtons');
+            tabButtons.addEventListener('click', event => {
+                if (event.target.nodeName == 'BUTTON') {
+                    for (tab of tabs) {
+                        if (event.target.textContent == tab.getAttribute('data-tabname')) {
+                            tab.style.display = 'block';
+                        } else {
+                            tab.style.display = 'none';
+                        };
+                    };
+                };
+            })
+        };
+        asTabs(document.querySelector("tab-panel"));
     </script>
 
 </body>
