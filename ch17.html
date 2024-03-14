@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chapter 17</title>
+</head>
+
+<body>
+    <h1>Chapter 17</h1>
+    <p>Chapter 17 content goes here.</p>
+    <p>Before canvas.</p>
+    <canvas width="500" height="300"></canvas>
+
+    <script>
+        let canvas = document.querySelector('canvas');
+        let cx = canvas.getContext('2d');
+        cx.fillStyle = 'green';
+        cx.fillRect(10, 10, 50, 50);
+        cx.strokeStyle = 'red';
+        cx.lineWidth = 5;
+        cx.strokeRect(10, 10, 50, 50);
+        cx.strokeStyle = "blue";
+        cx.strokeRect(5, 5, 50, 50);
+        cx.lineWidth = 5;
+        cx.strokeRect(135, 5, 50, 50);
+        cx.lineWidth = 1;
+        cx.beginPath();
+        for (let y = 10; y < 100; y += 10) {
+            cx.moveTo(10, y);
+            cx.lineTo(90, y);
+        }
+        cx.stroke();
+        cx.beginPath();
+        cx.moveTo(50, 10);
+        cx.lineTo(10, 70);
+        cx.lineTo(90, 70);
+        cx.fill();
+        cx.strokeStyle = "yellow";
+        cx.beginPath();
+        cx.moveTo(10, 90);
+        cx.quadraticCurveTo(60, 10, 90, 90);
+        cx.stroke();
+        cx.strokeStyle = "black";
+        cx.beginPath();
+        cx.moveTo(10, 90);
+        // control1=(10,10) control2=(90,10) goal=(50,90)
+        cx.bezierCurveTo(10, 10, 90, 10, 0, 90);
+        cx.lineTo(90, 10);
+        cx.lineTo(10, 10);
+        cx.closePath();
+        cx.stroke();
+        cx.beginPath();
+        cx.arc(200, 200, 40, 0, 7);
+        cx.moveTo(340, 200);
+        cx.arc(300, 200, 40, 0, .5 * Math.PI);
+        cx.stroke();
+    </script>
+
+    <h2>Pie Chart Practice</h2>
+    <canvas id="piecharts" width="200" height="200"></canvas>
+    <script>
+        const results = [
+            { name: 'Satisfied', count: 1043, color: 'lightblue' },
+            { name: 'Neutral', count: 563, color: 'lightgreen' },
+            { name: 'Unsatisfied', count: 510, color: 'pink' },
+            { name: 'No comment', count: 175, color: 'silver' }
+        ];
+        let cxPie = document.querySelectorAll('canvas')[1].getContext('2d');
+        let total = results.reduce((sum, {count}) => sum + count, 0);
+        let currentAngle = -0.5 * Math.PI;
+        for (let result of results) {
+            console.log(result)
+            let sliceAngle = (result.count / total) * 2 * Math.PI;
+            cxPie.beginPath();
+            cxPie.arc(100, 100, 70, currentAngle, currentAngle + sliceAngle);
+            currentAngle += sliceAngle;
+            cxPie.lineTo(100, 100);
+            cxPie.fillStyle = result.color;
+            cxPie.fill();
+        };
+        cxPie.font = "20px Georgia"
+        cxPie.fillStyle = "black"
+        cxPie.fillText("Survey Results: ", 29, 20)
+    </script>
+</body>
+
+</html>
