@@ -82,6 +82,75 @@
         cxPie.fillStyle = "black"
         cxPie.fillText("Survey Results: ", 29, 20)
     </script>
+
+    <h2>Drawing a Character</h2>
+    <canvas id="character" width="24" height="30"></canvas>
+    <script>
+        let cxChar = document.querySelector('canvas#character').getContext('2d');
+        let img = document.createElement('img');
+        img.src = '17_canvas/img/player.png'
+        let spriteW = 24, spriteH = 30;
+        img.addEventListener('load', () => {
+            let cycle = 0;
+            setInterval(() => {
+                cxChar.clearRect(0, 0, spriteW, spriteH);
+                cxChar.drawImage(img,
+                    cycle * spriteW, 0, spriteW, spriteH,
+                    0, 0, spriteW, spriteH);
+                cycle = (cycle + 1) % 8;
+            })
+        }, 120)
+    </script>
+
+    <h2>Scaling</h2>
+    <canvas id="scaling" width="200" height="200"></canvas>
+    <script>
+        let cxScaling = document.querySelector('canvas#scaling').getContext('2d');
+        cxScaling.scale(3, .5);
+        cxScaling.beginPath();
+        cxScaling.arc(50, 50, 40, 0, 7);
+        cxScaling.linewidth = 3;
+        cxScaling.stroke();
+    </script>
+
+    <h2>Flipping</h2>
+    <canvas id="flipping" width="200" height="200"></canvas>
+    <script>
+        function flipHorizontally(context, around) {
+            context.translate(around, 0);
+            context.scale(-1, 1);
+            context.translate(-around, 0);
+        }
+        let cxFlip = document.querySelector('canvas#flipping').getContext('2d');
+        let imgFlip = document.createElement('img');
+        imgFlip.src = '17_canvas/img/player.png';
+        imgFlip.addEventListener('load', () => {
+            flipHorizontally(cxFlip, 100);
+            cxFlip.drawImage(imgFlip, 0, 0, spriteW, spriteH,
+                0, 0, spriteW, spriteH);
+        })
+    </script>
+
+    <h2>Save and Restore</h2>
+    <canvas id="saveRestore" width="500" height="700"></canvas>
+    <script>
+        let cxSV = document.querySelector('canvas#saveRestore').getContext('2d');
+        function branch(length, angle, scale) {
+            cxSV.fillRect(0, 0, .3, length);
+            if (length < 2) return;
+            cxSV.save();
+            cxSV.translate(0, length);
+            cxSV.rotate(-angle);
+            branch(length * scale, angle, scale);
+            cxSV.rotate(2 * angle);
+            branch(length * scale, angle, scale);
+            cxSV.restore();
+        }
+        cxSV.translate(300, 50);
+        branch(60, 0.75, 0.78);
+        cxSV.save();
+
+    </script>
 </body>
 
 </html>
