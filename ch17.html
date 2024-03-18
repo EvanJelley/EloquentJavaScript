@@ -66,7 +66,7 @@
             { name: 'No comment', count: 175, color: 'silver' }
         ];
         let cxPie = document.querySelectorAll('canvas')[1].getContext('2d');
-        let total = results.reduce((sum, {count}) => sum + count, 0);
+        let total = results.reduce((sum, { count }) => sum + count, 0);
         let currentAngle = -0.5 * Math.PI;
         for (let result of results) {
             console.log(result)
@@ -103,7 +103,7 @@
     </script>
 
     <h2>Scaling</h2>
-    <canvas id="scaling" width="200" height="200"></canvas>
+    <canvas id="scaling" width="200" height="80"></canvas>
     <script>
         let cxScaling = document.querySelector('canvas#scaling').getContext('2d');
         cxScaling.scale(3, .5);
@@ -114,7 +114,7 @@
     </script>
 
     <h2>Flipping</h2>
-    <canvas id="flipping" width="200" height="200"></canvas>
+    <canvas id="flipping" width="200" height="50"></canvas>
     <script>
         function flipHorizontally(context, around) {
             context.translate(around, 0);
@@ -132,7 +132,7 @@
     </script>
 
     <h2>Save and Restore</h2>
-    <canvas id="saveRestore" width="500" height="700"></canvas>
+    <canvas id="saveRestore" width="500" height="400"></canvas>
     <script>
         let cxSV = document.querySelector('canvas#saveRestore').getContext('2d');
         function branch(length, angle, scale) {
@@ -148,6 +148,88 @@
         }
         cxSV.translate(300, 50);
         branch(60, 0.75, 0.78);
+    </script>
+
+    <!--Exercise 1: Shapes-->
+    <h2>Exercise 1: Shapes</h2>
+    <canvas id="shapes" width="500" height="500"></canvas>
+    <script>
+        let cxShape = document.querySelector('canvas#shapes').getContext('2d');
+        // Trapezoid
+        function trapezoid(context, x, y, height, bottom, top) {
+            let overhang = (bottom - top) / 2
+            let highPoint = y - height
+            context.beginPath();
+            context.moveTo(x, y);
+            context.lineTo(x + overhang, highPoint);
+            context.lineTo(x + overhang + top, highPoint);
+            context.lineTo(x + bottom, y);
+            context.lineTo(x, y);
+            context.stroke();
+        }
+        trapezoid(cxShape, 10, 50, 40, 80, 50)
+
+        // Diamond
+        function diamond(context, x, y, area, color = 'red') {
+            let side = Math.sqrt(area)
+            let toCorner = Math.sqrt((side ^ 2) + (side ^ 2))
+            context.beginPath();
+            context.moveTo(x, y - toCorner);
+            context.lineTo(x + toCorner, y);
+            context.lineTo(x, y + toCorner);
+            context.lineTo(x - toCorner, y);
+            context.lineTo(x, y - toCorner);
+            context.fillStyle = color;
+            context.fill();
+        };
+        diamond(cxShape, 140, 30, 100000, 'green');
+
+        function zigZag(context, x, y, width, height, segments) {
+            context.beginPath();
+            context.moveTo(x, y);
+            let yStep = height / (segments + 1)
+            let prevY = y
+            for (let i = 0; i < segments; i++) {
+                if (i % 2 == 0) {
+                    context.lineTo(x + width, prevY + yStep)
+                } else {
+                    context.lineTo(x, prevY + yStep)
+                };
+                prevY += yStep
+            }
+            context.stroke();
+        };
+        zigZag(cxShape, 10, 60, 30, 100, 30);
+
+        function spiral1(context, x, y, radius) {
+            context.beginPath();
+            let angleSlice = Math.PI / 5
+            let lastAngle = 0
+            for (let drawRadius = 0; drawRadius <= radius; drawRadius += .5) {
+                context.arc(x, y, drawRadius, lastAngle, lastAngle + angleSlice);
+                lastAngle += angleSlice;
+            };
+            context.stroke();
+        }
+
+        function spiral(cx, x, y) {
+            let radius = 50, xCenter = x + radius, yCenter = y + radius;
+            cx.beginPath();
+            cx.moveTo(xCenter, yCenter);
+            for (let i = 0; i < 300; i++) {
+                let angle = i * Math.PI / 30;
+                let dist = radius * i / 300;
+                cx.lineTo(xCenter + Math.cos(angle) * dist,
+                    yCenter + Math.sin(angle) * dist);
+            }
+            cx.stroke();
+        }
+        spiral(cxShape, 340, 20);
+        spiral1(cxShape, 150, 150, 50)
+
+        cxShape.beginPath();
+        cxShape.arc(80, 80, 20, 0, Math.PI * 2);
+        cxShape.stroke();
     </script>
 </body>
 
