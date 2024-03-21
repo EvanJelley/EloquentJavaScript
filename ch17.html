@@ -273,14 +273,17 @@
     </script>
 
     <h2>Bouncing Ball</h2>
-    <canvas id="bouncing" width="400" height="400"></canvas>
+    <canvas id="bouncing"></canvas>
     <script>
-        let cxBounce = document.querySelector("canvas#bouncing").getContext("2d");
-
-        function bounceObjects(balls, stars=false) {
+        function bounceObjects(balls, stars=false, canvasSize) {
+            let canvasBounce = document.querySelector("canvas#bouncing");
+            let cxBounce = canvasBounce.getContext("2d");
+            canvasBounce.width = canvasSize;
+            canvasBounce.height = canvasSize;
             let lastTime = null;
             let ballArray = [];
-            let colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink", "black", "white", "brown", "grey"];
+            let colors = ["yellow", "pink", "brown"];
+            
             // Initialize balls
             for (let i = 0; i < balls; i++) {
                 ballArray.push({
@@ -289,7 +292,7 @@
                     xSpeed: Math.random() * 300 + 5,
                     ySpeed: Math.random() * 300 + 5,
                     color:  colors[Math.floor(Math.random() * colors.length)],
-                    radius: Math.random() * 15
+                    radius: Math.random() *15
                 });
             }
 
@@ -303,15 +306,17 @@
             requestAnimationFrame(frame);
 
             function updateAnimation(step) {
-                cxBounce.clearRect(0, 0, 400, 400);
-                cxBounce.strokeRect(0, 0, 400, 400);
+                cxBounce.clearRect(0, 0, canvasSize, canvasSize);
+                cxBounce.fillStyle = "lightblue";
+                cxBounce.fillRect(0, 0, canvasSize, canvasSize);
+                cxBounce.strokeRect(0, 0, canvasSize, canvasSize);
 
                 for (let ball of ballArray) {
                     let nextX = ball.x + ball.xSpeed * step;
                     let nextY = ball.y + ball.ySpeed * step;
 
-                    if (nextX < ball.radius || nextX > 400 - ball.radius) ball.xSpeed = -ball.xSpeed;
-                    if (nextY < ball.radius || nextY > 400 - ball.radius) ball.ySpeed = -ball.ySpeed;
+                    if (nextX < ball.radius || nextX > canvasSize - ball.radius) ball.xSpeed = -ball.xSpeed;
+                    if (nextY < ball.radius || nextY > canvasSize - ball.radius) ball.ySpeed = -ball.ySpeed;
 
                     ball.x += ball.xSpeed * step;
                     ball.y += ball.ySpeed * step;
@@ -328,7 +333,7 @@
             }
         }
 
-        bounceObjects(400); // Call the function with the number of balls you want
+        bounceObjects(700, star=false, canvasSize=500); // Call the function with the number of balls you want
     </script>
 </body>
 
