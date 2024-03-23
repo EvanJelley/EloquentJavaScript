@@ -7,7 +7,7 @@ fetch("https://www.wikipedia.org/").then(response => {
 })
 
 
-Exercise 1
+// Exercise 1
 fetch("https://eloquentjavascript.net/author", {headers: {Accept: "text/plain"}}).then(response => {
     console.log(response.status);
     console.log(response.headers.get("Content-Type"));

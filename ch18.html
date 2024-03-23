@@ -147,6 +147,18 @@
             });
     </script>
 
+    <textarea id="code">return "hi";</textarea>
+    <button id="codeButton">Run</button>
+    <pre id="output"></pre>
+
+    <script>
+        document.querySelector('button#codeButton')
+            .addEventListener('click', () => {
+                let code = document.querySelector('textarea#code');
+                let result = new Function(code.value)();
+                document.querySelector('pre#output').textContent = result;
+            })
+    </script>
 
 </body>
 
