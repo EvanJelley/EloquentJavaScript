@@ -1,5 +1,5 @@
 class Level {
-    constructor(width, height, cells) {
+    constructor(width, height, cells, clear = false) {
         if (width < 1 || height < 1) {
             throw new Error('Width and height must be greater than 0');
         };
@@ -10,7 +10,7 @@ class Level {
             for (let row = 0; row < this.height; row++) {
                 for (let column = 0; column < this.width; column++) {
                     let cell = new Cell(row, column);
-                    if (Math.random() > .5) {
+                    if (Math.random() > .5 && !clear) {
                         cell.giveLife();
                     };
                     this.cells.push(cell);
@@ -109,12 +109,16 @@ class DOMDisplay {
         let viewportHeight = window.innerHeight * .7;
 
         // Calculate the size for each cell
-        let cellWidth = viewportWidth / level.width;
-        let cellHeight = viewportHeight / level.height;
+        let cellWidth = Math.min(viewportWidth, 500) / level.width;
+        let cellHeight = Math.min(viewportHeight, 500) / level.height;
 
         let gameTable = document.createElement("table");
         let gameRow = document.createElement("tr");
         let counter = 0;
+
+        let mouseDown = false;
+        document.addEventListener('mousedown', () => mouseDown = true);
+        document.addEventListener('mouseup', () => mouseDown = false);
 
         for (let cell of level.getCells()) {
             if (counter >= level.width) {
@@ -126,6 +130,30 @@ class DOMDisplay {
             block.style.width = cellWidth + "px";
             block.style.height = cellHeight + "px";
             block.style.backgroundColor = cell.isAlive() ? this.ALIVECOLOR : this.DEADCOLOR;
+            block.addEventListener('mouseover', () => {
+                if (mouseDown) {    
+                    if (cell.isAlive()) {
+                            cell.kill();
+                            block.style.backgroundColor = this.DEADCOLOR;
+                            block.removeEventListener('mouseover', () => {});
+                        } else {
+                            cell.giveLife();
+                            block.style.backgroundColor = this.ALIVECOLOR;
+                            block.removeEventListener('mouseover', () => {});
+                        };
+                    }
+            });
+            block.addEventListener('mousedown', () => {
+                if (cell.isAlive()) {
+                    cell.kill();
+                    block.style.backgroundColor = this.DEADCOLOR;
+                    block.removeEventListener('mouseover', () => {});
+                } else {
+                    cell.giveLife();
+                    block.style.backgroundColor = this.ALIVECOLOR;
+                    block.removeEventListener('mouseover', () => {});
+                }
+            });
             gameRow.appendChild(block);
             counter++;            
         };
@@ -153,21 +181,24 @@ function playGame(level) {
     });
 };
 
-let testLevel = new Level(30, 30);
-playGame(testLevel);
 
-// let testLevel = new Level(5, 5);
-// console.log(testLevel.__str__());
-// testLevel = testLevel.update();
-// console.log(testLevel.__str__());
+let randomGame = document.querySelector('button#random');
+randomGame.addEventListener('click', () => {
+    if (document.querySelector('div#game').innerHTML != "") {
+        document.querySelector('div#game').innerHTML = "";
+    }
+    let testLevel = new Level(30, 30);
+    playGame(testLevel);
+});
 
-// playGame(testLevel);
-// new DOMDisplay(testLevel);
-// testCell = testLevel.getCell(5, 5);
-// neighbors = testLevel.findNeighbors(testCell).filter(neighbor => neighbor.isAlive());
-// console.log(neighbors);
-// console.log(neighbors.length);
-// console.log(testLevel.cells);
-// new DOMDisplay(testLevel);
-// nextLevel = testLevel.update();
-// console.log(nextLevel.cells);
+let customGame = document.querySelector('button#custom');
+customGame.addEventListener('click', () => {
+    if (document.querySelector('div#game').innerHTML != "") {
+        document.querySelector('div#game').innerHTML = "";
+    }
+    let width = prompt('Enter the width of the game board');
+    let height = prompt('Enter the height of the game board');
+    let testLevel = new Level(width, height, cells=undefined, clear = true);
+    playGame(testLevel);
+});
+
