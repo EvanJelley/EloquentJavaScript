@@ -46,21 +46,12 @@ var PictureCanvas = class PictureCanvas {
     }
     syncState(picture) {
         if (this.picture == picture) return;
-        let oldPicture = this.picture;
+        drawPicture(picture, this.dom, scale, this.picture);
         this.picture = picture;
-        drawPicture(this.picture, this.dom, scale, oldPicture);
     }
 }
 
-// let newPixels = [];
-// for (let i = 0; i < picture.pixels.length; i++) {
-//     if (this.picture.pixels[i] != picture.pixels[i]) {
-//         let x = i % picture.width;
-//         let y = Math.floor(i / picture.width);
-//     }
-// }
-
-function drawPicture(picture, canvas, scale, oldPicture) {
+function drawPicture(picture, canvas, scale, previous) {
     if (canvas.width != picture.width * scale) {
         canvas.width = picture.width * scale;
     }
@@ -71,7 +62,7 @@ function drawPicture(picture, canvas, scale, oldPicture) {
 
     for (let y = 0; y < picture.height; y++) {
         for (let x = 0; x < picture.width; x++) {
-            if (oldPicture && picture.pixel(x, y) == oldPicture.pixel(x, y)) {
+            if (previous == null || picture.pixel(x, y) != previous.pixel(x, y)) {
                 cx.fillStyle = picture.pixel(x, y);
                 cx.fillRect(x * scale, y * scale, scale, scale);
             }
@@ -140,26 +131,26 @@ var PixelEditor = class PixelEditor {
             Control => new Control(state, config));
         this.dom = elt("div", {
             tabIndex: 0,
-            onkeydown: e => this.keyDown(e, config)    
+            onkeydown: e => this.keyDown(e, config)
         }, this.canvas.dom, elt("br"),
             ...this.controls.reduce(
                 (a, c) => a.concat(" ", c.dom), []));
-            }
+    }
 
-        keyDown(e, config) {
-            if (e.key == "z" && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                config.dispatch({ undo: true });
-            } else if (!e.ctrlKey && !e.metaKey && !e.altKey) {
-                for (let tool of Object.keys(config.tools)) {
-                    if (tool[0] == e.key) {
-                        e.preventDefault();
-                        config.dispatch({ tool });
-                        return;
-                    }
+    keyDown(e, config) {
+        if (e.key == "z" && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            config.dispatch({ undo: true });
+        } else if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+            for (let tool of Object.keys(config.tools)) {
+                if (tool[0] == e.key) {
+                    e.preventDefault();
+                    config.dispatch({ tool });
+                    return;
                 }
             }
         }
+    }
     syncState(state) {
         this.state = state;
         this.canvas.syncState(state.picture);
@@ -216,6 +207,28 @@ function rectangle(start, state, dispatch) {
     }
     drawRectangle(start);
     return drawRectangle;
+}
+
+function circle(pos, state, dispatch) {
+    function drawCircle(to) {
+        let radius = Math.sqrt((to.x - pos.x) ** 2 +
+            (to.y - pos.y) ** 2);
+        let radiusC = Math.ceil(radius);
+        let drawn = [];
+        for (let dy = -radiusC; dy <= radiusC; dy++) {
+            for (let dx = -radiusC; dx <= radiusC; dx++) {
+                let dist = Math.sqrt(dx ** 2 + dy ** 2);
+                if (dist > radius) continue;
+                let y = pos.y + dy, x = pos.x + dx;
+                if (y < 0 || y >= state.picture.height ||
+                    x < 0 || x >= state.picture.width) continue;
+                drawn.push({ x, y, color: state.color });
+            }
+        }
+        dispatch({ picture: state.picture.draw(drawn) });
+    }
+    drawCircle(pos);
+    return drawCircle;
 }
 
 var around = [{ dx: -1, dy: 0 }, { dx: 1, dy: 0 },
@@ -359,7 +372,7 @@ var startState = {
     doneAt: 0
 };
 
-var baseTools = { draw, fill, rectangle, pick };
+var baseTools = { draw, fill, rectangle, pick, circle };
 
 var baseControls = [
     ToolSelect, ColorSelect, SaveButton, LoadButton, UndoButton
@@ -379,4 +392,7 @@ function startPixelEditor({ state = startState,
     return app.dom;
 }
 
-document.querySelector("div").appendChild(startPixelEditor({}));
+let dom = startPixelEditor({
+    tools: Object.assign({}, baseTools, { circle })
+});
+document.querySelector("div").appendChild(dom);
