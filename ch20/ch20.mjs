@@ -1,5 +1,5 @@
 import { reverse } from './reverse.mjs';
-import { createWriteStream, readFile, writeFile, createReadStream } from 'node:fs';
+import { createWriteStream, readFile, writeFile, createReadStream, mkdir } from 'node:fs';
 import { join } from 'node:path';
 import { createServer, request } from 'node:http';
 import { parse } from 'node:url';
@@ -89,3 +89,17 @@ methods.PUT = async function (request) {
     await pipeStream(request, createWriteStream(path));
     return { status: 204 };
 };
+
+methods.MKCOL = async function (request) {
+    let path = urlPath(request.url);
+    let stats;
+    try {
+        stats = await stat(path);
+    } catch (error) {
+        if (error.code != 'ENOENT') throw error;
+        mkdir(path);
+        return { status: 204 };
+    }
+    if (stats.isDirectory()) return { status: 204 };
+    else return { status: 400, body: 'Not a directory' };
+}
