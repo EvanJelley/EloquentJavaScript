@@ -1,25 +1,25 @@
 function handleAction(state, action) {
   if (action.type == "setUser") {
     localStorage.setItem("userName", action.user);
-    return {...state, user: action.user};
+    return { ...state, user: action.user };
   } else if (action.type == "setTalks") {
-    return {...state, talks: action.talks};
+    return { ...state, talks: action.talks };
   } else if (action.type == "newTalk") {
     fetchOK(talkURL(action.title), {
       method: "PUT",
-      headers: {"Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         presenter: state.user,
         summary: action.summary
       })
     }).catch(reportError);
   } else if (action.type == "deleteTalk") {
-    fetchOK(talkURL(action.talk), {method: "DELETE"})
+    fetchOK(talkURL(action.talk), { method: "DELETE" })
       .catch(reportError);
   } else if (action.type == "newComment") {
     fetchOK(talkURL(action.talk) + "/comments", {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         author: state.user,
         message: action.message
@@ -49,7 +49,7 @@ function renderUserField(name, dispatch) {
     type: "text",
     value: name,
     onchange(event) {
-      dispatch({type: "setUser", user: event.target.value});
+      dispatch({ type: "setUser", user: event.target.value });
     }
   }));
 }
@@ -66,61 +66,67 @@ function elt(type, props, ...children) {
 
 function renderTalk(talk, dispatch) {
   return elt(
-    "section", {className: "talk"},
+    "section", { className: "talk" },
     elt("h2", null, talk.title, " ", elt("button", {
       type: "button",
       onclick() {
-        dispatch({type: "deleteTalk", talk: talk.title});
+        dispatch({ type: "deleteTalk", talk: talk.title });
       }
     }, "Delete")),
     elt("div", null, "by ",
-        elt("strong", null, talk.presenter)),
+      elt("strong", null, talk.presenter)),
     elt("p", null, talk.summary),
     ...talk.comments.map(renderComment),
     elt("form", {
       onsubmit(event) {
         event.preventDefault();
         let form = event.target;
-        dispatch({type: "newComment",
-                  talk: talk.title,
-                  message: form.elements.comment.value});
+        dispatch({
+          type: "newComment",
+          talk: talk.title,
+          message: form.elements.comment.value
+        });
         form.reset();
       }
-    }, elt("input", {type: "text", name: "comment"}), " ",
-       elt("button", {type: "submit"}, "Add comment")));
+    }, elt("input", { type: "text", name: "comment" }), " ",
+      elt("button", { type: "submit" }, "Add comment")));
 }
 
 function renderComment(comment) {
-  return elt("p", {className: "comment"},
-             elt("strong", null, comment.author),
-             ": ", comment.message);
+  return elt("p", { className: "comment" },
+    elt("strong", null, comment.author),
+    ": ", comment.message);
 }
 
 function renderTalkForm(dispatch) {
-  let title = elt("input", {type: "text"});
-  let summary = elt("input", {type: "text"});
+  let title = elt("input", { type: "text" });
+  let summary = elt("input", { type: "text" });
   return elt("form", {
     onsubmit(event) {
       event.preventDefault();
-      dispatch({type: "newTalk",
-                title: title.value,
-                summary: summary.value});
+      dispatch({
+        type: "newTalk",
+        title: title.value,
+        summary: summary.value
+      });
       event.target.reset();
     }
   }, elt("h3", null, "Submit a Talk"),
-     elt("label", null, "Title: ", title),
-     elt("label", null, "Summary: ", summary),
-     elt("button", {type: "submit"}, "Submit"));
+    elt("label", null, "Title: ", title),
+    elt("label", null, "Summary: ", summary),
+    elt("button", { type: "submit" }, "Submit"));
 }
 
 async function pollTalks(update) {
   let tag = undefined;
-  for (;;) {
+  for (; ;) {
     let response;
     try {
       response = await fetchOK("/talks", {
-        headers: tag && {"If-None-Match": tag,
-                         "Prefer": "wait=90"}
+        headers: tag && {
+          "If-None-Match": tag,
+          "Prefer": "wait=90"
+        }
       });
     } catch (e) {
       console.log("Request failed: " + e);
@@ -136,11 +142,11 @@ async function pollTalks(update) {
 var SkillShareApp = class SkillShareApp {
   constructor(state, dispatch) {
     this.dispatch = dispatch;
-    this.talkDOM = elt("div", {className: "talks"});
+    this.talkDOM = elt("div", { className: "talks" });
     this.dom = elt("div", null,
-                   renderUserField(state.user, dispatch),
-                   this.talkDOM,
-                   renderTalkForm(dispatch));
+      renderUserField(state.user, dispatch),
+      this.talkDOM,
+      renderTalkForm(dispatch));
     this.syncState(state);
   }
 
@@ -166,11 +172,11 @@ function runApp() {
 
   pollTalks(talks => {
     if (!app) {
-      state = {user, talks};
+      state = { user, talks };
       app = new SkillShareApp(state, dispatch);
       document.body.appendChild(app.dom);
     } else {
-      dispatch({type: "setTalks", talks});
+      dispatch({ type: "setTalks", talks });
     }
   }).catch(reportError);
 }

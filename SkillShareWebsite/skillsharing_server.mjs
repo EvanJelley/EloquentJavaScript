@@ -1,5 +1,6 @@
 import { createServer } from "node:http";
 import serveStatic from "serve-static";
+import { writeFile, readFile } from "node:fs/promises";
 
 function notFound(request, response) {
   response.writeHead(404, "Not found");
@@ -140,11 +141,41 @@ SkillShareServer.prototype.waitForChanges = function (time) {
   });
 };
 
+SkillShareServer.prototype.storeData = function(name) {
+  let data = {
+    version: this.version,
+    talks: this.talks
+  };
+  writeFile(name, JSON.stringify(data));
+}
+
+SkillShareServer.prototype.load = async function () {
+  this.talks = Object.create(null);
+  try {
+    let data = await readFile("talks.json", "utf8");
+    let json = JSON.parse(data);
+    if (json.version != null) {
+      this.version = json.version;
+      this.talks = json.talks;
+    }
+  } catch (e) {
+    console.log("No talks.json file, starting with empty database");
+  }
+}
+
 SkillShareServer.prototype.updated = function () {
   this.version++;
   let response = this.talkResponse();
   this.waiting.forEach(resolve => resolve(response));
   this.waiting = [];
+  this.storeData("talks.json", this.talks);
 };
 
-new SkillShareServer({}).start(8000);
+async function startServer() {
+  let server = new SkillShareServer();
+  await server.load();
+  server.start(8000);
+};
+
+startServer();
+
